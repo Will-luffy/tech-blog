@@ -12,11 +12,11 @@ public void A() {
 }
 
 public void B() {
-    throw Non-runtimeException()
+    throw Exception()
 }
 ```
 此时B会和A存在一个事务中。如果B抛出异常没有捕获，即使在A中捕获并处理，仍会发生异常：**Transaction rolled back because it has been marked as rollback-only**
-因为spring会在A捕获异常之前提前捕获到异常，并将当前事务设置为**rollback-only**，而A期望的行为是commit，当它发现状态为设置为rollback-only时，
+因为spring会在A捕获异常之前提前捕获到异常，并将当前事务设置为**rollback-only**，而A觉得对异常进行了捕获，它仍然继续commit，当TransactionManager发现状态为设置为rollback-only时，
 则会抛出UnexpectedRollbackException
 相关代码在AbstractPlatformTransactonManager.java中：
 ```
@@ -52,4 +52,4 @@ public final void commit(TransactionStatus status) throws TransactionException {
 	}
 ```
 **解决方法：**
-在抛出异常的最原始地方处理异常，即在spring捕获到异常之前处理掉；如果需要抛出异常由上级方法处理，请捕获后抛出runtimeException
+在抛出异常的最原始地方处理异常，即在spring捕获到异常之前处理掉
