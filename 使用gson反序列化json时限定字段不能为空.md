@@ -1,5 +1,6 @@
-设计Json Api时，总会遇到将Json字符串转化为Java 对象，然后再处理业务逻辑。但对象中的某些字段我们不希望它们为空，这就需要我们对Java对象的字段进行校验。如果对象中包含多级对象，这样校验起来就非常麻烦。
-我使用Google的gson进行json的序列化和反序列化操作，所以就想到gson是否具有这样的过滤机制，查看了好久的api，无奈也没有什么收获，所以就想到自己修改gson代码，增加这样一个功能。实现方式类似gson中的@SerializedName和@Expose等，采用注解实现。
+##使用gson反序列化json时限定字段不能为空
+设计Json Api时，总会遇到将Json字符串转化为Java对象，然后再处理业务逻辑。但对象中的某些字段我们不希望它们为空，这就需要我们对Java对象的字段进行校验。如果对象中包含多级对象，这样校验起来就非常麻烦。
+我使用Google的gson进行json的序列化和反序列化操作，所以就想到gson是否具有这样的过滤机制，查看了好久的api，无奈也没有什么收获，所以就想到自己修改gson代码，增加这样一个功能。实现方式类似gson中的`@SerializedName`和`@Expose`等，采用注解实现。
 首先声明一个注解
 ```java
 @Retention(RetentionPolicy.RUNTIME)
@@ -82,6 +83,6 @@ void read(JsonReader reader, Object value)
   return instance;
 }
 ```
-这样，你在解析json字符串到java 对象时，如果想限定某个字段的值不能为null时，只要加上@NotNull注解即可。
+这样，你在解析json字符串到java 对象时，如果想限定某个字段的值不能为null时，只要加上`@NotNull`注解即可。
 代码从这里下载：[https://github.com/Will-luffy/gson](https://github.com/Will-luffy/gson)
 PS: *由于没有把gson的源码完全看过来，对增加的功能也没有完全充分的进行测试，如果有什么问题，还请指正，谢谢。*
